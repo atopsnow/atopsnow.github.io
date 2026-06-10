@@ -1,0 +1,38 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PostCard from '../../components/PostCard.astro';
+import { byLocale, sortByDate, isPublished } from '../../lib/posts';
+import { useTranslations } from '../../i18n/ui';
+
+export const getStaticPaths = (async () => {
+  const all = await getCollection('blog', isPublished);
+  const posts = byLocale(all, 'zh');
+  const tags = new Set<string>();
+  for (const p of posts) for (const tag of p.data.tags) tags.add(tag);
+  return [...tags].map((tag) => ({
+    params: { tag },
+    props: { posts: sortByDate(posts.filter((p) => p.data.tags.includes(tag))) },
+  }));
+}) satisfies GetStaticPaths;
+
+type Entry = Awaited<ReturnType<typeof getCollection<'blog'>>>[number];
+const { tag } = Astro.params;
+const { posts } = Astro.props as { posts: Entry[] };
+const t = useTranslations('zh');
+---
+<BaseLayout title={`#${tag}`}>
+  <Header slot="header" />
+  <Footer slot="footer" />
+  <h1 class="text-2xl font-bold">#{tag}</h1>
+  <p class="mt-1 text-sm text-zinc-500">{posts.length} {t('tags.count')}</p>
+  <section class="mt-6">
+    {posts.map((p) => (
+      <PostCard id={p.id} title={p.data.title} description={p.data.description}
+        pubDate={p.data.pubDate} tags={p.data.tags} locale="zh" />
+    ))}
+  </section>
+</BaseLayout>

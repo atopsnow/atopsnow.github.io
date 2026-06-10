@@ -1,0 +1,52 @@
+---
+import 'katex/dist/katex.min.css';
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Comments from '../components/Comments.astro';
+import { useTranslations, localizedPath } from '../i18n/ui';
+import type { Locale } from '../consts';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags: string[];
+  locale: Locale;
+  zhHref?: string;
+  enHref?: string;
+  prev?: { href: string; title: string } | null;
+  next?: { href: string; title: string } | null;
+}
+const { title, description, pubDate, updatedDate, tags, locale, zhHref, enHref, prev, next } = Astro.props;
+const t = useTranslations(locale);
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+<BaseLayout title={title} description={description}>
+  <Header slot="header" zhHref={zhHref} enHref={enHref} />
+  <Footer slot="footer" />
+  <article data-pagefind-body class="prose prose-zinc max-w-none dark:prose-invert">
+    <h1>{title}</h1>
+    <p class="text-sm text-zinc-500">
+      <time datetime={fmt(pubDate)}>{fmt(pubDate)}</time>
+      {updatedDate && <span> · {t('post.updated')} {fmt(updatedDate)}</span>}
+    </p>
+    <slot />
+  </article>
+
+  {tags.length > 0 && (
+    <div class="mt-8 flex flex-wrap gap-2">
+      {tags.map((tag) => (
+        <a href={localizedPath(`/tags/${tag}`, locale)} class="rounded bg-zinc-100 px-2 py-1 text-xs dark:bg-zinc-800">#{tag}</a>
+      ))}
+    </div>
+  )}
+
+  <nav class="mt-8 flex justify-between text-sm">
+    {prev ? <a href={prev.href} class="hover:underline">← {t('post.prev')}: {prev.title}</a> : <span />}
+    {next ? <a href={next.href} class="hover:underline">{t('post.next')}: {next.title} →</a> : <span />}
+  </nav>
+
+  <Comments locale={locale} />
+</BaseLayout>

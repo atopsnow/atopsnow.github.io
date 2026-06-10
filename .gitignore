@@ -1,0 +1,29 @@
+.DS_Store
+._*
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.log
+logs/
+tmp/
+.cache/
+
+# Astro
+node_modules/
+dist/
+.astro/
+.output/
+
+# Local AI collaboration / planning (not published)
+.ai/
+docs/
+AGENTS.md
+CLAUDE.md

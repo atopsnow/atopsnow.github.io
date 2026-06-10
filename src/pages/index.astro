@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PostCard from '../components/PostCard.astro';
+import { byLocale, sortByDate, isPublished } from '../lib/posts';
+import { useTranslations } from '../i18n/ui';
+import { SITE } from '../consts';
+
+const all = await getCollection('blog', isPublished);
+const posts = sortByDate(byLocale(all, 'zh')).slice(0, 10);
+const t = useTranslations('zh');
+---
+<BaseLayout title={SITE.title}>
+  <Header slot="header" />
+  <Footer slot="footer" />
+  <section class="py-6">
+    <h1 class="text-5xl font-semibold tracking-tight sm:text-6xl">{SITE.title}</h1>
+    <div class="mt-4 h-px w-16 bg-accent"></div>
+    <p class="mt-5 max-w-xl text-lg text-zinc-600 dark:text-zinc-400">{t('site.tagline')}</p>
+  </section>
+  <section class="mt-6">
+    {posts.map((p) => (
+      <PostCard id={p.id} title={p.data.title} description={p.data.description}
+        pubDate={p.data.pubDate} tags={p.data.tags} locale="zh" />
+    ))}
+  </section>
+</BaseLayout>

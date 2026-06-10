@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { useTranslations } from '../i18n/ui';
+const t = useTranslations('zh');
+---
+<BaseLayout title={t('search.title')}>
+  <Header slot="header" zhHref="/search" enHref="/en/search" />
+  <Footer slot="footer" />
+  <h1 class="text-2xl font-bold">{t('search.title')}</h1>
+  <link rel="stylesheet" href="/pagefind/pagefind-ui.css" />
+  <div id="search" class="mt-6"></div>
+  <script is:inline>
+    window.addEventListener('DOMContentLoaded', () => {
+      const el = document.getElementById('search');
+      if (!el) return;
+      const init = () => new window.PagefindUI({ element: '#search', showSubResults: true });
+      const s = document.createElement('script');
+      s.src = '/pagefind/pagefind-ui.js';
+      s.onload = init;
+      s.onerror = () => { el.innerHTML = '<p class="text-sm text-zinc-500">搜索索引需在构建后生成；本地请运行 npm run build && npm run preview。</p>'; };
+      document.head.appendChild(s);
+    });
+  </script>
+</BaseLayout>

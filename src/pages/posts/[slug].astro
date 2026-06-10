@@ -1,0 +1,42 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+import { byLocale, sortByDate, isPublished, slugOf, counterpartSlug } from '../../lib/posts';
+import { localizedPath } from '../../i18n/ui';
+
+export async function getStaticPaths() {
+  const all = await getCollection('blog', isPublished);
+  const zh = sortByDate(byLocale(all, 'zh'));
+  return zh.map((post, i) => ({
+    params: { slug: slugOf(post.id) },
+    props: {
+      id: post.id,
+      prev: zh[i + 1] ? { href: localizedPath(`/posts/${slugOf(zh[i + 1].id)}`, 'zh'), title: zh[i + 1].data.title } : null,
+      next: zh[i - 1] ? { href: localizedPath(`/posts/${slugOf(zh[i - 1].id)}`, 'zh'), title: zh[i - 1].data.title } : null,
+    },
+  }));
+}
+
+const { id, prev, next } = Astro.props;
+const post = await getEntry('blog', id);
+if (!post) throw new Error(`Post not found: ${id}`);
+const { Content } = await render(post);
+
+const all = await getCollection('blog', isPublished);
+const enSlug = counterpartSlug(all, id, 'en');
+const slug = slugOf(id);
+---
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  pubDate={post.data.pubDate}
+  updatedDate={post.data.updatedDate}
+  tags={post.data.tags}
+  locale="zh"
+  zhHref={localizedPath(`/posts/${slug}`, 'zh')}
+  enHref={enSlug ? localizedPath(`/posts/${enSlug}`, 'en') : '/en/'}
+  prev={prev}
+  next={next}
+>
+  <Content />
+</PostLayout>

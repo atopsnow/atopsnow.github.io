@@ -1,0 +1,186 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* class-based dark mode (Tailwind v4) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ──────────────────────────────────────────────────────────────
+   "Editorial Ink" — warm paper / deep ink, typographic, one warm
+   vermilion accent. Latin display = Fraunces, body = Newsreader,
+   code = IBM Plex Mono; CJK falls back to quality system serifs.
+   ────────────────────────────────────────────────────────────── */
+
+@theme {
+  --font-display: "Fraunces", "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+  --font-serif: "Newsreader", Georgia, "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "JetBrains Mono", "PingFang SC", monospace;
+
+  /* Accent utilities (text-accent / bg-accent / border-accent) that follow
+     light/dark automatically via the runtime CSS variables below. */
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
+  /* Remap Tailwind's (cool) zinc scale to warm greys so every existing
+     `zinc-*` utility in the components harmonises with the paper/ink theme. */
+  --color-zinc-100: #f2ede2;
+  --color-zinc-200: #e8decd;
+  --color-zinc-300: #d9ccb6;
+  --color-zinc-400: #a99d87;
+  --color-zinc-500: #857b69;
+  --color-zinc-600: #6b6253;
+  --color-zinc-700: #524a3d;
+  --color-zinc-800: #2a261d;
+  --color-zinc-900: #211e17;
+  --color-zinc-950: #15130e;
+}
+
+:root {
+  color-scheme: light;
+  --paper: #faf7f0;
+  --paper-2: #f2ede2;
+  --ink: #211e17;
+  --ink-soft: #3b362c;
+  --muted: #6f6655;
+  --line: #e8decd;
+  --accent: #b23a25;
+  --accent-soft: #c1543c;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --paper: #15130e;
+  --paper-2: #211e17;
+  --ink: #ece6d8;
+  --ink-soft: #d9d2c2;
+  --muted: #9c9385;
+  --line: #322d23;
+  --accent: #e8956b;
+  --accent-soft: #f0a884;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-serif);
+  background-color: var(--paper);
+  color: var(--ink-soft);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* faint paper grain for atmosphere */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  font-feature-settings: "ss01";
+  letter-spacing: -0.014em;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 24%, transparent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* thin warm scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted) transparent;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background-color: color-mix(in oklab, var(--muted) 55%, transparent);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+
+/* code font for Expressive Code blocks */
+:root {
+  --ec-codeFontFamily: var(--font-mono);
+}
+
+/* ── Article typography (@tailwindcss/typography) ───────────────── */
+.prose {
+  --tw-prose-body: var(--ink-soft);
+  --tw-prose-headings: var(--ink);
+  --tw-prose-lead: var(--muted);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--ink);
+  --tw-prose-counters: var(--muted);
+  --tw-prose-bullets: var(--accent-soft);
+  --tw-prose-hr: var(--line);
+  --tw-prose-quotes: var(--ink);
+  --tw-prose-quote-borders: var(--accent);
+  --tw-prose-captions: var(--muted);
+  --tw-prose-code: var(--ink);
+  --tw-prose-pre-bg: var(--paper-2);
+  --tw-prose-th-borders: var(--line);
+  --tw-prose-td-borders: var(--line);
+  /* mirror to invert so dark:prose-invert resolves to the same tokens,
+     which already flip via :root.dark */
+  --tw-prose-invert-body: var(--ink-soft);
+  --tw-prose-invert-headings: var(--ink);
+  --tw-prose-invert-lead: var(--muted);
+  --tw-prose-invert-links: var(--accent);
+  --tw-prose-invert-bold: var(--ink);
+  --tw-prose-invert-counters: var(--muted);
+  --tw-prose-invert-bullets: var(--accent-soft);
+  --tw-prose-invert-hr: var(--line);
+  --tw-prose-invert-quotes: var(--ink);
+  --tw-prose-invert-quote-borders: var(--accent);
+  --tw-prose-invert-captions: var(--muted);
+  --tw-prose-invert-code: var(--ink);
+  --tw-prose-invert-pre-bg: var(--paper-2);
+  --tw-prose-invert-th-borders: var(--line);
+  --tw-prose-invert-td-borders: var(--line);
+
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+
+.prose :where(h1, h2, h3) {
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.prose :where(a) {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+.prose :where(a):hover {
+  color: var(--accent-soft);
+}
+.prose :where(blockquote) {
+  font-style: italic;
+  border-inline-start-width: 3px;
+}
+.prose :where(:not(pre) > code) {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: color-mix(in oklab, var(--accent) 12%, transparent);
+  padding: 0.15em 0.4em;
+  border-radius: 0.3rem;
+  font-weight: 500;
+}
+.prose :where(:not(pre) > code)::before,
+.prose :where(:not(pre) > code)::after {
+  content: none;
+}

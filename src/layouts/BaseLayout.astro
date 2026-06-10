@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+import { SITE } from '../consts';
+import { getLocaleFromUrl, useTranslations } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const { title, description = t('site.tagline'), image } = Astro.props;
+const canonical = new URL(Astro.url.pathname, SITE.url);
+const ogImage = image ? new URL(image, SITE.url) : undefined;
+const fullTitle = title === SITE.title ? title : `${title} · ${SITE.title}`;
+---
+<!doctype html>
+<html lang={locale === 'en' ? 'en' : 'zh-CN'} class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title}
+          href={locale === 'en' ? '/en/rss.xml' : '/rss.xml'} />
+    <!-- no-flash theme: run before paint -->
+    <script is:inline>
+      try {
+        const t = localStorage.getItem('theme');
+        if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch {}
+    </script>
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <slot name="header" />
+    <main class="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+      <slot />
+    </main>
+    <slot name="footer" />
+  </body>
+</html>

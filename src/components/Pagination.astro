@@ -1,0 +1,11 @@
+---
+import { useTranslations } from '../i18n/ui';
+import type { Locale } from '../consts';
+interface Props { prevUrl?: string; nextUrl?: string; locale: Locale; }
+const { prevUrl, nextUrl, locale } = Astro.props;
+const t = useTranslations(locale);
+---
+<nav class="mt-8 flex justify-between text-sm">
+  {prevUrl ? <a href={prevUrl} class="hover:underline">← {t('pagination.prev')}</a> : <span />}
+  {nextUrl ? <a href={nextUrl} class="hover:underline">{t('pagination.next')} →</a> : <span />}
+</nav>

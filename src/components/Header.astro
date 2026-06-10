@@ -1,0 +1,31 @@
+---
+import { SITE } from '../consts';
+import { getLocaleFromUrl, useTranslations, localizedPath } from '../i18n/ui';
+import ThemeToggle from './ThemeToggle.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+
+interface Props { zhHref?: string; enHref?: string; }
+const { zhHref, enHref } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const t = useTranslations(locale);
+const link = (p: string) => localizedPath(p, locale);
+const nav = [
+  ['/', t('nav.home')],
+  ['/posts', t('nav.posts')],
+  ['/tags', t('nav.tags')],
+  ['/about', t('nav.about')],
+  ['/search', t('nav.search')],
+] as const;
+---
+<header class="border-b border-zinc-200 dark:border-zinc-800">
+  <div class="mx-auto flex max-w-3xl items-center justify-between px-4 py-4 sm:px-6">
+    <a href={link('/')} class="text-lg font-bold">{SITE.title}</a>
+    <nav class="flex items-center gap-4 text-sm">
+      {nav.map(([path, label]) => (
+        <a href={link(path)} class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100">{label}</a>
+      ))}
+      <LanguageSwitcher zhHref={zhHref} enHref={enHref} />
+      <ThemeToggle />
+    </nav>
+  </div>
+</header>

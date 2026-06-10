@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { useTranslations } from '../i18n/ui';
+const t = useTranslations('zh');
+---
+<BaseLayout title={t('nav.about')}>
+  <Header slot="header" zhHref="/about" enHref="/en/about" />
+  <Footer slot="footer" />
+  <h1 class="text-2xl font-bold">{t('nav.about')}</h1>
+  <p class="mt-4 text-zinc-600 dark:text-zinc-400">你好，我是 atopsnow。这里记录我的技术与思考。</p>
+</BaseLayout>
